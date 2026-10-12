@@ -19,6 +19,7 @@ public class ModuleManager {
         register(new BiomeModule());
         register(new ClockModule());
         register(new MemoryModule());
+        register(new ChunkMapModule());
         register(new KeystrokesModule());
         register(new ArmorModule());
         register(new PotionModule());
@@ -28,6 +29,8 @@ public class ModuleManager {
         register(new AutoSprintModule());
         // Render
         register(new EspModule());
+        register(new StorageEspModule());
+        register(new HoleEspModule());
         register(new FullbrightModule());
         register(new ZoomModule());
     }

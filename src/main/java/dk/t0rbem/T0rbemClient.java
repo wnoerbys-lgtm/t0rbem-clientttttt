@@ -5,6 +5,7 @@ import dk.t0rbem.modules.ModuleManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
@@ -44,9 +45,14 @@ public class T0rbemClient implements ClientModInitializer {
 
         ModuleManager.init();
         Config.load();
+        ChunkTracker.load();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> Config.save());
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
+            Config.save();
+            ChunkTracker.save();
+        });
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ChunkTracker.save());
         HudElementRegistry.attachElementAfter(
                 VanillaHudElements.MISC_OVERLAYS,
                 Identifier.of(ID, "hud"),
