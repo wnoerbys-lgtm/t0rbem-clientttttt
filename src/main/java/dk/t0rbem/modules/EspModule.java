@@ -45,12 +45,6 @@ public class EspModule extends Module {
 
         double yaw = Math.toRadians(p.method_5705(pt));
         double pitch = Math.toRadians(p.method_5695(pt));
-
-        if (dk.t0rbem.modules.FreecamModule.isActive()) {
-            dk.t0rbem.modules.FreecamModule fc = dk.t0rbem.modules.FreecamModule.INSTANCE;
-            ex = fc.lerpX(pt); ey = fc.lerpY(pt); ez = fc.lerpZ(pt);
-            yaw = Math.toRadians(fc.yaw); pitch = Math.toRadians(fc.pitch);
-        }
         fx = -Math.sin(yaw) * Math.cos(pitch);
         fy = -Math.sin(pitch);
         fz = Math.cos(yaw) * Math.cos(pitch);
