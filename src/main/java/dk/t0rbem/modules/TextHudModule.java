@@ -1,9 +1,8 @@
 package dk.t0rbem.modules;
 
 import dk.t0rbem.HudEditorScreen;
-import net.minecraft.client.gui.DrawContext;
-
 import java.util.List;
+import net.minecraft.class_332;
 
 /** HUD-element der bare viser nogle tekstlinjer. */
 public abstract class TextHudModule extends HudModule {
@@ -26,7 +25,7 @@ public abstract class TextHudModule extends HudModule {
     @Override
     public int width() {
         int w = 0;
-        for (String s : cached) w = Math.max(w, mc.textRenderer.getWidth(s));
+        for (String s : cached) w = Math.max(w, mc.field_1772.method_1727(s));
         return cached.isEmpty() ? 0 : w + PAD * 2;
     }
 
@@ -36,10 +35,10 @@ public abstract class TextHudModule extends HudModule {
     }
 
     @Override
-    protected void draw(DrawContext ctx, int x, int y) {
+    protected void draw(class_332 ctx, int x, int y) {
         int c = textColor();
         for (int i = 0; i < cached.size(); i++) {
-            ctx.drawTextWithShadow(mc.textRenderer, cached.get(i), x + PAD, y + PAD + i * LINE, c);
+            ctx.method_25303(mc.field_1772, cached.get(i), x + PAD, y + PAD + i * LINE, c);
         }
     }
 }

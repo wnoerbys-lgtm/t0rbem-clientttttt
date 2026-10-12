@@ -7,8 +7,8 @@ public class PingModule extends TextHudModule {
 
     @Override
     protected List<String> lines() {
-        if (mc.player == null || mc.getNetworkHandler() == null) return List.of("Ping: ?");
-        var entry = mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
-        return List.of("Ping: " + (entry == null ? "?" : entry.getLatency() + " ms"));
+        if (mc.field_1724 == null || mc.method_1562() == null) return List.of("Ping: ?");
+        var entry = mc.method_1562().method_2871(mc.field_1724.method_5667());
+        return List.of("Ping: " + (entry == null ? "?" : entry.method_2959() + " ms"));
     }
 }

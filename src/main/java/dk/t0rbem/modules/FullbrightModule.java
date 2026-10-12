@@ -1,7 +1,7 @@
 package dk.t0rbem.modules;
 
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.class_1293;
+import net.minecraft.class_1294;
 
 public class FullbrightModule extends Module {
     public FullbrightModule() {
@@ -10,12 +10,12 @@ public class FullbrightModule extends Module {
 
     @Override
     public void onTick() {
-        if (mc.player == null) return;
-        mc.player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 400, 0, false, false, false));
+        if (mc.field_1724 == null) return;
+        mc.field_1724.method_6092(new class_1293(class_1294.field_5925, 400, 0, false, false, false));
     }
 
     @Override
     public void onDisable() {
-        if (mc.player != null) mc.player.removeStatusEffect(StatusEffects.NIGHT_VISION);
+        if (mc.field_1724 != null) mc.field_1724.method_6016(class_1294.field_5925);
     }
 }

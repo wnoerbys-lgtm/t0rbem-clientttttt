@@ -11,8 +11,8 @@ public class SpeedModule extends TextHudModule {
 
     @Override
     public void onTick() {
-        if (mc.player == null) return;
-        double x = mc.player.getX(), z = mc.player.getZ();
+        if (mc.field_1724 == null) return;
+        double x = mc.field_1724.method_23317(), z = mc.field_1724.method_23321();
         if (hasLast) {
             double raw = Math.hypot(x - lastX, z - lastZ) * 20.0;
             speed = speed * 0.7 + raw * 0.3; // let udjævning

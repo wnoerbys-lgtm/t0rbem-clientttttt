@@ -2,14 +2,14 @@ package dk.t0rbem.modules;
 
 import dk.t0rbem.settings.BoolSetting;
 import dk.t0rbem.settings.NumberSetting;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.class_1296;
+import net.minecraft.class_1297;
+import net.minecraft.class_1542;
+import net.minecraft.class_1569;
+import net.minecraft.class_1657;
+import net.minecraft.class_332;
+import net.minecraft.class_3532;
+import net.minecraft.class_746;
 
 /**
  * 2D-ESP: beregner selv hvor entiteter er på skærmen og tegner en ramme om dem.
@@ -33,18 +33,24 @@ public class EspModule extends Module {
     }
 
     @Override
-    public void renderHud(DrawContext ctx, float pt) {
-        ClientPlayerEntity p = mc.player;
-        if (p == null || mc.world == null) return;
+    public void renderHud(class_332 ctx, float pt) {
+        class_746 p = mc.field_1724;
+        if (p == null || mc.field_1687 == null) return;
 
         // kamera
-        double eyeOffset = p.getEyeY() - p.getY();
-        ex = MathHelper.lerp(pt, p.lastRenderX, p.getX());
-        ey = MathHelper.lerp(pt, p.lastRenderY, p.getY()) + eyeOffset;
-        ez = MathHelper.lerp(pt, p.lastRenderZ, p.getZ());
+        double eyeOffset = p.method_23320() - p.method_23318();
+        ex = class_3532.method_16436(pt, p.field_6038, p.method_23317());
+        ey = class_3532.method_16436(pt, p.field_5971, p.method_23318()) + eyeOffset;
+        ez = class_3532.method_16436(pt, p.field_5989, p.method_23321());
 
-        double yaw = Math.toRadians(p.getYaw(pt));
-        double pitch = Math.toRadians(p.getPitch(pt));
+        double yaw = Math.toRadians(p.method_5705(pt));
+        double pitch = Math.toRadians(p.method_5695(pt));
+
+        if (dk.t0rbem.modules.FreecamModule.isActive()) {
+            dk.t0rbem.modules.FreecamModule fc = dk.t0rbem.modules.FreecamModule.INSTANCE;
+            ex = fc.lerpX(pt); ey = fc.lerpY(pt); ez = fc.lerpZ(pt);
+            yaw = Math.toRadians(fc.yaw); pitch = Math.toRadians(fc.pitch);
+        }
         fx = -Math.sin(yaw) * Math.cos(pitch);
         fy = -Math.sin(pitch);
         fz = Math.cos(yaw) * Math.cos(pitch);
@@ -55,21 +61,21 @@ public class EspModule extends Module {
         uy = rz * fx - rx * fz;
         uz = rx * fy;
 
-        tanHalf = Math.tan(Math.toRadians(mc.options.getFov().getValue()) / 2.0);
-        aspect = (double) mc.getWindow().getFramebufferWidth() / Math.max(1, mc.getWindow().getFramebufferHeight());
-        sw = ctx.getScaledWindowWidth();
-        sh = ctx.getScaledWindowHeight();
+        tanHalf = Math.tan(Math.toRadians(mc.field_1690.method_41808().method_41753()) / 2.0);
+        aspect = (double) mc.method_22683().method_4489() / Math.max(1, mc.method_22683().method_4506());
+        sw = ctx.method_51421();
+        sh = ctx.method_51443();
 
         double maxSq = range.get() * range.get();
 
-        for (Entity e : mc.world.getEntities()) {
+        for (class_1297 e : mc.field_1687.method_18112()) {
             if (e == p) continue;
             int color = colorFor(e);
             if (color == 0) continue;
 
-            double x = MathHelper.lerp(pt, e.lastRenderX, e.getX());
-            double y = MathHelper.lerp(pt, e.lastRenderY, e.getY());
-            double z = MathHelper.lerp(pt, e.lastRenderZ, e.getZ());
+            double x = class_3532.method_16436(pt, e.field_6038, e.method_23317());
+            double y = class_3532.method_16436(pt, e.field_5971, e.method_23318());
+            double z = class_3532.method_16436(pt, e.field_5989, e.method_23321());
 
             double dx = x - ex, dy = y - ey, dz = z - ez;
             double distSq = dx * dx + dy * dy + dz * dz;
@@ -79,16 +85,16 @@ public class EspModule extends Module {
         }
     }
 
-    private int colorFor(Entity e) {
-        if (e instanceof PlayerEntity) return players.get() ? 0xFF55FFFF : 0;
-        if (e instanceof Monster) return hostile.get() ? 0xFFFF5555 : 0;
-        if (e instanceof PassiveEntity) return passive.get() ? 0xFF55FF55 : 0;
-        if (e instanceof ItemEntity) return items.get() ? 0xFFFFFF55 : 0;
+    private int colorFor(class_1297 e) {
+        if (e instanceof class_1657) return players.get() ? 0xFF55FFFF : 0;
+        if (e instanceof class_1569) return hostile.get() ? 0xFFFF5555 : 0;
+        if (e instanceof class_1296) return passive.get() ? 0xFF55FF55 : 0;
+        if (e instanceof class_1542) return items.get() ? 0xFFFFFF55 : 0;
         return 0;
     }
 
-    private void drawBox(DrawContext ctx, Entity e, double x, double y, double z, int color, double dist) {
-        double hw = e.getWidth() / 2.0, h = e.getHeight();
+    private void drawBox(class_332 ctx, class_1297 e, double x, double y, double z, int color, double dist) {
+        double hw = e.method_17681() / 2.0, h = e.method_17682();
         double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
 
@@ -107,18 +113,18 @@ public class EspModule extends Module {
         int x1 = (int) minX, y1 = (int) minY, x2 = (int) maxX, y2 = (int) maxY;
         if (x2 < 0 || y2 < 0 || x1 > sw || y1 > sh) return;
 
-        ctx.fill(x1, y1, x2, y1 + 1, color);
-        ctx.fill(x1, y2 - 1, x2, y2, color);
-        ctx.fill(x1, y1, x1 + 1, y2, color);
-        ctx.fill(x2 - 1, y1, x2, y2, color);
+        ctx.method_25294(x1, y1, x2, y1 + 1, color);
+        ctx.method_25294(x1, y2 - 1, x2, y2, color);
+        ctx.method_25294(x1, y1, x1 + 1, y2, color);
+        ctx.method_25294(x2 - 1, y1, x2, y2, color);
 
         if (names.get()) {
-            String name = e instanceof ItemEntity item
-                    ? item.getStack().getName().getString()
-                    : e.getName().getString();
+            String name = e instanceof class_1542 item
+                    ? item.method_6983().method_7964().getString()
+                    : e.method_5477().getString();
             String label = name + " " + (int) dist + "m";
-            int tx = (x1 + x2) / 2 - mc.textRenderer.getWidth(label) / 2;
-            ctx.drawTextWithShadow(mc.textRenderer, label, tx, y1 - 10, color);
+            int tx = (x1 + x2) / 2 - mc.field_1772.method_1727(label) / 2;
+            ctx.method_25303(mc.field_1772, label, tx, y1 - 10, color);
         }
     }
 

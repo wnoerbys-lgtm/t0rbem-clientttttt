@@ -13,10 +13,10 @@ public class ZoomModule extends Module {
 
     @Override
     public void onTick() {
-        var fov = mc.options.getFov();
-        if (T0rbemClient.zoomKey.isPressed()) {
-            if (savedFov == -1) savedFov = fov.getValue();
-            fov.setValue(zoomFov.getInt());
+        var fov = mc.field_1690.method_41808();
+        if (T0rbemClient.zoomKey.method_1434()) {
+            if (savedFov == -1) savedFov = fov.method_41753();
+            fov.method_41748(zoomFov.getInt());
         } else {
             restore();
         }
@@ -27,7 +27,7 @@ public class ZoomModule extends Module {
 
     private void restore() {
         if (savedFov != -1) {
-            mc.options.getFov().setValue(savedFov);
+            mc.field_1690.method_41808().method_41748(savedFov);
             savedFov = -1;
         }
     }

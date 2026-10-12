@@ -1,9 +1,8 @@
 package dk.t0rbem.modules;
 
-import net.minecraft.entity.effect.StatusEffectInstance;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.class_1293;
 
 public class PotionModule extends TextHudModule {
     public PotionModule() { super("Potions", "Viser aktive effekter og tid tilbage.", true, 9999, 4); }
@@ -11,11 +10,11 @@ public class PotionModule extends TextHudModule {
     @Override
     protected List<String> lines() {
         List<String> out = new ArrayList<>();
-        if (mc.player == null) return out;
-        for (StatusEffectInstance e : mc.player.getStatusEffects()) {
-            String name = e.getEffectType().value().getName().getString();
-            String lvl = e.getAmplifier() > 0 ? " " + (e.getAmplifier() + 1) : "";
-            out.add(name + lvl + " " + (e.isInfinite() ? "inf" : time(e.getDuration())));
+        if (mc.field_1724 == null) return out;
+        for (class_1293 e : mc.field_1724.method_6026()) {
+            String name = e.method_5579().comp_349().method_5560().getString();
+            String lvl = e.method_5578() > 0 ? " " + (e.method_5578() + 1) : "";
+            out.add(name + lvl + " " + (e.method_48559() ? "inf" : time(e.method_5584())));
         }
         return out;
     }

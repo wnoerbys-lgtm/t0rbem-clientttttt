@@ -2,11 +2,10 @@ package dk.t0rbem.modules;
 
 import com.google.gson.JsonObject;
 import dk.t0rbem.settings.Setting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.class_310;
+import net.minecraft.class_332;
 
 public abstract class Module {
     public enum Category {
@@ -24,7 +23,7 @@ public abstract class Module {
     public final Category category;
     public boolean enabled;
     protected final List<Setting> settings = new ArrayList<>();
-    protected final MinecraftClient mc = MinecraftClient.getInstance();
+    protected final class_310 mc = class_310.method_1551();
 
     protected Module(String name, String description, Category category, boolean enabled) {
         this.name = name;
@@ -53,7 +52,7 @@ public abstract class Module {
     public void onTick() {}
 
     /** Tegnes oven på verdenen hver frame (bruges af ESP). */
-    public void renderHud(DrawContext ctx, float partialTicks) {}
+    public void renderHud(class_332 ctx, float partialTicks) {}
 
     public JsonObject save() {
         JsonObject o = new JsonObject();

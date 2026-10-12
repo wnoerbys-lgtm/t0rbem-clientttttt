@@ -16,8 +16,8 @@ public class CpsModule extends TextHudModule {
 
     @Override
     public void onTick() {
-        boolean l = mc.options.attackKey.isPressed();
-        boolean r = mc.options.useKey.isPressed();
+        boolean l = mc.field_1690.field_1886.method_1434();
+        boolean r = mc.field_1690.field_1904.method_1434();
         long now = System.currentTimeMillis();
         if (l && !lastLeft) left.add(now);
         if (r && !lastRight) right.add(now);

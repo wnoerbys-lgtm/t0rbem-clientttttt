@@ -6,5 +6,5 @@ public class FpsModule extends TextHudModule {
     public FpsModule() { super("FPS", "Viser billeder per sekund.", true, 4, 20); }
 
     @Override
-    protected List<String> lines() { return List.of("FPS: " + mc.getCurrentFps()); }
+    protected List<String> lines() { return List.of("FPS: " + mc.method_47599()); }
 }

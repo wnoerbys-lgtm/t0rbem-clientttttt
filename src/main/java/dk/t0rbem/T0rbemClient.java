@@ -9,10 +9,10 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.minecraft.class_2960;
+import net.minecraft.class_304;
+import net.minecraft.class_310;
+import net.minecraft.class_3675;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,26 +22,26 @@ public class T0rbemClient implements ClientModInitializer {
     public static final String ID = "t0rbem";
     public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
-    public static KeyBinding guiKey;
-    public static KeyBinding hudKey;
-    public static KeyBinding zoomKey;
-    public static KeyBinding flightKey;
+    public static class_304 guiKey;
+    public static class_304 hudKey;
+    public static class_304 zoomKey;
+    public static class_304 flightKey;
 
     public static boolean hudVisible = true;
 
     @Override
     public void onInitializeClient() {
-        KeyBinding.Category category = KeyBinding.Category.create(Identifier.of(ID, "main"));
+        class_304.class_11900 category = class_304.class_11900.method_74698(class_2960.method_60655(ID, "main"));
 
-        guiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.t0rbem.gui", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT, category));
-        hudKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.t0rbem.hud", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, category));
-        zoomKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.t0rbem.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, category));
+        guiKey = KeyBindingHelper.registerKeyBinding(new class_304(
+                "key.t0rbem.gui", class_3675.class_307.field_1668, GLFW.GLFW_KEY_RIGHT_SHIFT, category));
+        hudKey = KeyBindingHelper.registerKeyBinding(new class_304(
+                "key.t0rbem.hud", class_3675.class_307.field_1668, GLFW.GLFW_KEY_H, category));
+        zoomKey = KeyBindingHelper.registerKeyBinding(new class_304(
+                "key.t0rbem.zoom", class_3675.class_307.field_1668, GLFW.GLFW_KEY_C, category));
 
-        flightKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.t0rbem.flight", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, category));
+        flightKey = KeyBindingHelper.registerKeyBinding(new class_304(
+                "key.t0rbem.flight", class_3675.class_307.field_1668, GLFW.GLFW_KEY_G, category));
 
         ModuleManager.init();
         Config.load();
@@ -55,21 +55,21 @@ public class T0rbemClient implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ChunkTracker.save());
         HudElementRegistry.attachElementAfter(
                 VanillaHudElements.MISC_OVERLAYS,
-                Identifier.of(ID, "hud"),
+                class_2960.method_60655(ID, "hud"),
                 T0rbemHud::render);
 
         LOGGER.info("{} indlæst", NAME);
     }
 
-    private void onTick(MinecraftClient mc) {
-        while (hudKey.wasPressed()) hudVisible = !hudVisible;
-        while (flightKey.wasPressed()) {
+    private void onTick(class_310 mc) {
+        while (hudKey.method_1436()) hudVisible = !hudVisible;
+        while (flightKey.method_1436()) {
             Module flight = ModuleManager.get("Flight");
             if (flight != null) flight.toggle();
         }
-        while (guiKey.wasPressed()) {
-            if (mc.currentScreen == null) mc.setScreen(new ClickGuiScreen());
+        while (guiKey.method_1436()) {
+            if (mc.field_1755 == null) mc.method_1507(new ClickGuiScreen());
         }
-        if (mc.player != null) ModuleManager.tick();
+        if (mc.field_1724 != null) ModuleManager.tick();
     }
 }

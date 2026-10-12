@@ -7,9 +7,9 @@ public class BiomeModule extends TextHudModule {
 
     @Override
     protected List<String> lines() {
-        if (mc.player == null || mc.world == null) return List.of();
-        String name = mc.world.getBiome(mc.player.getBlockPos()).getKey()
-                .map(k -> k.getValue().getPath().replace('_', ' '))
+        if (mc.field_1724 == null || mc.field_1687 == null) return List.of();
+        String name = mc.field_1687.method_23753(mc.field_1724.method_24515()).method_40230()
+                .map(k -> k.method_29177().method_12832().replace('_', ' '))
                 .orElse("unknown");
         return List.of("Biome: " + name);
     }

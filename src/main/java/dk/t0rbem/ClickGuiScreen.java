@@ -7,21 +7,20 @@ import dk.t0rbem.settings.BoolSetting;
 import dk.t0rbem.settings.ModeSetting;
 import dk.t0rbem.settings.NumberSetting;
 import dk.t0rbem.settings.Setting;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.class_11909;
+import net.minecraft.class_2561;
+import net.minecraft.class_332;
+import net.minecraft.class_437;
 
 /**
  * Venstreklik = slå modul til/fra. Højreklik = vis/skjul indstillinger.
  * Immediate-mode: alle klikbare områder genopbygges hver frame.
  */
-public class ClickGuiScreen extends Screen {
+public class ClickGuiScreen extends class_437 {
     private static final int W = 124, ROW = 14, GAP = 8, X0 = 14, Y0 = 14;
     private static final int ACCENT = 0xFF1D8F6A, BG = 0xDD0E1217, HOVER = 0x22FFFFFF;
 
@@ -47,14 +46,14 @@ public class ClickGuiScreen extends Screen {
     private String tip;
 
     public ClickGuiScreen() {
-        super(Text.literal(T0rbemClient.NAME));
+        super(class_2561.method_43470(T0rbemClient.NAME));
     }
 
     @Override
-    public boolean shouldPause() { return false; }
+    public boolean method_25421() { return false; }
 
     @Override
-    public void removed() { Config.save(); }
+    public void method_25432() { Config.save(); }
 
     private Hit addHit(int x, int y, int w, int h) {
         Hit hit = new Hit(x, y, w, h);
@@ -69,8 +68,8 @@ public class ClickGuiScreen extends Screen {
     // ---------- tegning ----------
 
     @Override
-    public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        ctx.fill(0, 0, width, height, 0x77000000);
+    public void method_25394(class_332 ctx, int mouseX, int mouseY, float delta) {
+        ctx.method_25294(0, 0, field_22789, field_22790, 0x77000000);
         hits.clear();
         tip = null;
 
@@ -82,7 +81,7 @@ public class ClickGuiScreen extends Screen {
         drawClientPanel(ctx, px, mouseX, mouseY);
 
         String t = tip != null ? tip : "Venstreklik: til/fra  |  Højreklik: indstillinger";
-        ctx.drawTextWithShadow(textRenderer, t, (width - textRenderer.getWidth(t)) / 2, height - 16, 0xFFCCCCCC);
+        ctx.method_25303(field_22793, t, (field_22789 - field_22793.method_1727(t)) / 2, field_22790 - 16, 0xFFCCCCCC);
     }
 
     private int heightOf(Module m) {
@@ -93,33 +92,33 @@ public class ClickGuiScreen extends Screen {
         return h;
     }
 
-    private void drawModulePanel(DrawContext ctx, int px, Module.Category cat, int mx, int my) {
+    private void drawModulePanel(class_332 ctx, int px, Module.Category cat, int mx, int my) {
         List<Module> mods = ModuleManager.in(cat);
         int total = ROW + 2;
         for (Module m : mods) total += heightOf(m);
 
-        ctx.fill(px, Y0, px + W, Y0 + total, BG);
-        ctx.fill(px, Y0, px + W, Y0 + ROW + 2, ACCENT);
-        ctx.drawTextWithShadow(textRenderer, cat.label, px + 5, Y0 + 4, 0xFFFFFFFF);
+        ctx.method_25294(px, Y0, px + W, Y0 + total, BG);
+        ctx.method_25294(px, Y0, px + W, Y0 + ROW + 2, ACCENT);
+        ctx.method_25303(field_22793, cat.label, px + 5, Y0 + 4, 0xFFFFFFFF);
 
         int y = Y0 + ROW + 2;
         for (Module m : mods) y = drawModule(ctx, px, y, m, mx, my);
     }
 
-    private int drawModule(DrawContext ctx, int px, int y, Module m, int mx, int my) {
+    private int drawModule(class_332 ctx, int px, int y, Module m, int mx, int my) {
         boolean hov = in(mx, my, px, y, W, ROW);
-        if (m.enabled) ctx.fill(px, y, px + W, y + ROW, 0x551D8F6A);
+        if (m.enabled) ctx.method_25294(px, y, px + W, y + ROW, 0x551D8F6A);
         if (hov) {
-            ctx.fill(px, y, px + W, y + ROW, HOVER);
+            ctx.method_25294(px, y, px + W, y + ROW, HOVER);
             tip = m.description;
         }
-        ctx.drawTextWithShadow(textRenderer, m.name, px + 5, y + 3, m.enabled ? 0xFF7CFFB2 : 0xFFBBBBBB);
+        ctx.method_25303(field_22793, m.name, px + 5, y + 3, m.enabled ? 0xFF7CFFB2 : 0xFFBBBBBB);
 
         boolean has = !m.settings().isEmpty();
         boolean open = EXPANDED.contains(m);
         if (has) {
             String arrow = open ? "v" : ">";
-            ctx.drawTextWithShadow(textRenderer, arrow, px + W - textRenderer.getWidth(arrow) - 5, y + 3, 0xFF888888);
+            ctx.method_25303(field_22793, arrow, px + W - field_22793.method_1727(arrow) - 5, y + 3, 0xFF888888);
         }
 
         Hit h = addHit(px, y, W, ROW);
@@ -133,18 +132,18 @@ public class ClickGuiScreen extends Screen {
         return y;
     }
 
-    private int drawSetting(DrawContext ctx, int px, int y, Setting s, int mx, int my) {
+    private int drawSetting(class_332 ctx, int px, int y, Setting s, int mx, int my) {
         int sx = px + 4, sw = W - 4;
 
         if (s instanceof NumberSetting n) {
             int h = 22;
-            ctx.fill(sx, y, px + W, y + h, 0x33000000);
-            ctx.drawTextWithShadow(textRenderer, n.name, sx + 4, y + 3, 0xFFAAAAAA);
+            ctx.method_25294(sx, y, px + W, y + h, 0x33000000);
+            ctx.method_25303(field_22793, n.name, sx + 4, y + 3, 0xFFAAAAAA);
             String v = n.display();
-            ctx.drawTextWithShadow(textRenderer, v, px + W - textRenderer.getWidth(v) - 4, y + 3, 0xFFFFFFFF);
+            ctx.method_25303(field_22793, v, px + W - field_22793.method_1727(v) - 4, y + 3, 0xFFFFFFFF);
             int bx = sx + 4, bw = sw - 8;
-            ctx.fill(bx, y + 15, bx + bw, y + 18, 0xFF333333);
-            ctx.fill(bx, y + 15, bx + (int) (bw * n.progress()), y + 18, ACCENT);
+            ctx.method_25294(bx, y + 15, bx + bw, y + 18, 0xFF333333);
+            ctx.method_25294(bx, y + 15, bx + (int) (bw * n.progress()), y + 18, ACCENT);
             Hit hit = addHit(sx, y, sw, h);
             hit.slider = n;
             hit.barX = bx;
@@ -152,9 +151,9 @@ public class ClickGuiScreen extends Screen {
             return y + h;
         }
 
-        ctx.fill(sx, y, px + W, y + ROW, 0x33000000);
-        if (in(mx, my, sx, y, sw, ROW)) ctx.fill(sx, y, px + W, y + ROW, HOVER);
-        ctx.drawTextWithShadow(textRenderer, s.name, sx + 4, y + 3, 0xFFAAAAAA);
+        ctx.method_25294(sx, y, px + W, y + ROW, 0x33000000);
+        if (in(mx, my, sx, y, sw, ROW)) ctx.method_25294(sx, y, px + W, y + ROW, HOVER);
+        ctx.method_25303(field_22793, s.name, sx + 4, y + 3, 0xFFAAAAAA);
 
         String value;
         int valueColor = 0xFFFFFFFF;
@@ -169,22 +168,22 @@ public class ClickGuiScreen extends Screen {
         } else {
             return y + ROW;
         }
-        ctx.drawTextWithShadow(textRenderer, value, px + W - textRenderer.getWidth(value) - 4, y + 3, valueColor);
+        ctx.method_25303(field_22793, value, px + W - field_22793.method_1727(value) - 4, y + 3, valueColor);
         addHit(sx, y, sw, ROW).left = action;
         return y + ROW;
     }
 
-    private void drawClientPanel(DrawContext ctx, int px, int mx, int my) {
+    private void drawClientPanel(class_332 ctx, int px, int mx, int my) {
         int rows = 3;
         int total = ROW + 2 + rows * ROW;
-        ctx.fill(px, Y0, px + W, Y0 + total, BG);
-        ctx.fill(px, Y0, px + W, Y0 + ROW + 2, ACCENT);
-        ctx.drawTextWithShadow(textRenderer, "Client", px + 5, Y0 + 4, 0xFFFFFFFF);
+        ctx.method_25294(px, Y0, px + W, Y0 + total, BG);
+        ctx.method_25294(px, Y0, px + W, Y0 + ROW + 2, ACCENT);
+        ctx.method_25303(field_22793, "Client", px + 5, Y0 + 4, 0xFFFFFFFF);
 
         int y = Y0 + ROW + 2;
         y = clientRow(ctx, px, y, mx, my, "Edit HUD layout", null, 0xFFFFFFFF,
                 "Træk HUD-elementerne hen hvor du vil have dem.",
-                () -> net.minecraft.client.MinecraftClient.getInstance().setScreen(new HudEditorScreen()));
+                () -> net.minecraft.class_310.method_1551().method_1507(new HudEditorScreen()));
         y = clientRow(ctx, px, y, mx, my, "HUD",
                 T0rbemClient.hudVisible ? "ON" : "OFF",
                 T0rbemClient.hudVisible ? 0xFF55FF88 : 0xFFFF5555,
@@ -195,15 +194,15 @@ public class ClickGuiScreen extends Screen {
                 () -> { for (HudModule h : ModuleManager.hud()) h.resetPosition(); });
     }
 
-    private int clientRow(DrawContext ctx, int px, int y, int mx, int my,
+    private int clientRow(class_332 ctx, int px, int y, int mx, int my,
                           String label, String value, int valueColor, String tooltip, Runnable action) {
         if (in(mx, my, px, y, W, ROW)) {
-            ctx.fill(px, y, px + W, y + ROW, HOVER);
+            ctx.method_25294(px, y, px + W, y + ROW, HOVER);
             tip = tooltip;
         }
-        ctx.drawTextWithShadow(textRenderer, label, px + 5, y + 3, 0xFFDDDDDD);
+        ctx.method_25303(field_22793, label, px + 5, y + 3, 0xFFDDDDDD);
         if (value != null) {
-            ctx.drawTextWithShadow(textRenderer, value, px + W - textRenderer.getWidth(value) - 5, y + 3, valueColor);
+            ctx.method_25303(field_22793, value, px + W - field_22793.method_1727(value) - 5, y + 3, valueColor);
         }
         addHit(px, y, W, ROW).left = action;
         return y + ROW;
@@ -222,37 +221,37 @@ public class ClickGuiScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        double mx = click.x(), my = click.y();
+    public boolean method_25402(class_11909 click, boolean doubled) {
+        double mx = click.comp_4798(), my = click.comp_4799();
         for (Hit h : hits) {
             if (!h.contains(mx, my)) continue;
-            if (click.button() == 0) {
+            if (click.method_74245() == 0) {
                 if (h.slider != null) {
                     dragHit = h;
                     applySlider(h, mx);
                 } else if (h.left != null) {
                     h.left.run();
                 }
-            } else if (click.button() == 1 && h.right != null) {
+            } else if (click.method_74245() == 1 && h.right != null) {
                 h.right.run();
             }
             return true;
         }
-        return super.mouseClicked(click, doubled);
+        return super.method_25402(click, doubled);
     }
 
     @Override
-    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+    public boolean method_25403(class_11909 click, double offsetX, double offsetY) {
         if (dragHit != null) {
-            applySlider(dragHit, click.x());
+            applySlider(dragHit, click.comp_4798());
             return true;
         }
-        return super.mouseDragged(click, offsetX, offsetY);
+        return super.method_25403(click, offsetX, offsetY);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean method_25406(class_11909 click) {
         dragHit = null;
-        return super.mouseReleased(click);
+        return super.method_25406(click);
     }
 }

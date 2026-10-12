@@ -3,7 +3,7 @@ package dk.t0rbem.modules;
 import com.google.gson.JsonObject;
 import dk.t0rbem.settings.BoolSetting;
 import dk.t0rbem.settings.ModeSetting;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.class_332;
 
 /** Et flytbart HUD-element. */
 public abstract class HudModule extends Module {
@@ -31,7 +31,7 @@ public abstract class HudModule extends Module {
 
     public abstract int width();
     public abstract int height();
-    protected abstract void draw(DrawContext ctx, int x, int y);
+    protected abstract void draw(class_332 ctx, int x, int y);
 
     protected boolean wantsBackground() { return background.get(); }
 
@@ -42,13 +42,13 @@ public abstract class HudModule extends Module {
         y = defY;
     }
 
-    public final void render(DrawContext ctx) {
+    public final void render(class_332 ctx) {
         prepare();
         int w = width(), h = height();
         if (w <= 0 || h <= 0) return;
-        x = Math.max(0, Math.min(x, ctx.getScaledWindowWidth() - w));
-        y = Math.max(0, Math.min(y, ctx.getScaledWindowHeight() - h));
-        if (wantsBackground()) ctx.fill(x, y, x + w, y + h, 0x66000000);
+        x = Math.max(0, Math.min(x, ctx.method_51421() - w));
+        y = Math.max(0, Math.min(y, ctx.method_51443() - h));
+        if (wantsBackground()) ctx.method_25294(x, y, x + w, y + h, 0x66000000);
         draw(ctx, x, y);
     }
 

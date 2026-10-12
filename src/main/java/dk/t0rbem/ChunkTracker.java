@@ -5,9 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
-
+import net.minecraft.class_310;
+import net.minecraft.class_642;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,14 +36,14 @@ public class ChunkTracker {
         return FabricLoader.getInstance().getConfigDir().resolve("t0rbem-chunks.json");
     }
 
-    public static String worldKey(MinecraftClient mc) {
-        ServerInfo info = mc.getCurrentServerEntry();
-        String server = info != null ? info.address : "singleplayer";
-        String dim = mc.world != null ? mc.world.getRegistryKey().getValue().toString() : "unknown";
+    public static String worldKey(class_310 mc) {
+        class_642 info = mc.method_1558();
+        String server = info != null ? info.field_3761 : "singleplayer";
+        String dim = mc.field_1687 != null ? mc.field_1687.method_27983().method_29177().toString() : "unknown";
         return server + "|" + dim;
     }
 
-    public static Map<Long, Integer> current(MinecraftClient mc) {
+    public static Map<Long, Integer> current(class_310 mc) {
         return DATA.computeIfAbsent(worldKey(mc), k -> new HashMap<>());
     }
 
@@ -52,14 +51,14 @@ public class ChunkTracker {
         return map.getOrDefault(pack(chunkX, chunkZ), 0);
     }
 
-    public static void tick(MinecraftClient mc, boolean includeSelf) {
-        if (mc.world == null) return;
+    public static void tick(class_310 mc, boolean includeSelf) {
+        if (mc.field_1687 == null) return;
         Map<Long, Integer> map = current(mc);
         Set<Long> seen = new HashSet<>();
-        for (var player : mc.world.getPlayers()) {
-            if (player == mc.player && !includeSelf) continue;
-            int cx = ((int) Math.floor(player.getX())) >> 4;
-            int cz = ((int) Math.floor(player.getZ())) >> 4;
+        for (var player : mc.field_1687.method_18456()) {
+            if (player == mc.field_1724 && !includeSelf) continue;
+            int cx = ((int) Math.floor(player.method_23317())) >> 4;
+            int cz = ((int) Math.floor(player.method_23321())) >> 4;
             seen.add(pack(cx, cz));
         }
         for (long k : seen) map.merge(k, 1, Integer::sum);
