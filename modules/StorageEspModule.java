@@ -1,0 +1,126 @@
+package dk.t0rbem.modules;
+
+import dk.t0rbem.render.Projector;
+import dk.t0rbem.settings.BoolSetting;
+import dk.t0rbem.settings.ModeSetting;
+import dk.t0rbem.settings.NumberSetting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChestBlockEntity;
+import net.minecraft.block.entity.DispenserBlockEntity;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.block.entity.EnderChestBlockEntity;
+import net.minecraft.block.entity.HopperBlockEntity;
+import net.minecraft.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.block.entity.TrappedChestBlockEntity;
+import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.block.entity.BarrelBlockEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
+
+/**
+ * Viser kister, tønder, shulkers m.m. gennem vægge i de chunks din klient har indlæst.
+ * "Ignore height" måler kun rækkevidden vandret, så kister langt under dig (fx under Y 0) også vises.
+ */
+public class StorageEspModule extends Module {
+    private final ModeSetting style = add(new ModeSetting("Style", "3D", "2D", "3D"));
+    private final BoolSetting chests = add(new BoolSetting("Chests", true));
+    private final BoolSetting enderChests = add(new BoolSetting("Ender chests", true));
+    private final BoolSetting barrels = add(new BoolSetting("Barrels", true));
+    private final BoolSetting shulkers = add(new BoolSetting("Shulker boxes", true));
+    private final BoolSetting furnaces = add(new BoolSetting("Furnaces", false));
+    private final BoolSetting hoppers = add(new BoolSetting("Hoppers", false));
+    private final BoolSetting dispensers = add(new BoolSetting("Dispensers/droppers", false));
+    private final BoolSetting fill = add(new BoolSetting("Fill (2D)", true));
+    private final BoolSetting names = add(new BoolSetting("Names", false));
+    private final BoolSetting ignoreHeight = add(new BoolSetting("Ignore height", true));
+    private final NumberSetting range = add(new NumberSetting("Range", 64, 16, 160, 8));
+
+    private final Projector proj = new Projector();
+
+    public StorageEspModule() {
+        super("Storage ESP", "Viser kister, tønder, shulkers m.m. gennem vægge – også langt under dig.", Category.RENDER, false);
+    }
+
+    private String nameFor(BlockEntity be) {
+        if (be instanceof TrappedChestBlockEntity) return chests.get() ? "Trapped chest" : null;
+        if (be instanceof ChestBlockEntity) return chests.get() ? "Chest" : null;
+        if (be instanceof EnderChestBlockEntity) return enderChests.get() ? "Ender chest" : null;
+        if (be instanceof BarrelBlockEntity) return barrels.get() ? "Barrel" : null;
+        if (be instanceof ShulkerBoxBlockEntity) return shulkers.get() ? "Shulker" : null;
+        if (be instanceof AbstractFurnaceBlockEntity) return furnaces.get() ? "Furnace" : null;
+        if (be instanceof HopperBlockEntity) return hoppers.get() ? "Hopper" : null;
+        if (be instanceof DispenserBlockEntity) return dispensers.get() ? "Dispenser" : null;
+        return null;
+    }
+
+    private static int colorFor(String name) {
+        return switch (name) {
+            case "Chest" -> 0xFFFFAA00;
+            case "Trapped chest" -> 0xFFFF5555;
+            case "Ender chest" -> 0xFFAA55FF;
+            case "Barrel" -> 0xFFCC8844;
+            case "Shulker" -> 0xFFFF77CC;
+            case "Furnace" -> 0xFFCCCCCC;
+            case "Hopper" -> 0xFF888888;
+            default -> 0xFF99AACC;
+        };
+    }
+
+    @Override
+    public void renderHud(DrawContext ctx, float pt) {
+        ClientPlayerEntity p = mc.player;
+        if (p == null || mc.world == null) return;
+        proj.update(ctx, pt);
+
+        boolean threeD = style.index() == 1;
+        boolean flat = ignoreHeight.get();
+        int pcx = ((int) Math.floor(proj.ex)) >> 4;
+        int pcz = ((int) Math.floor(proj.ez)) >> 4;
+        int rc = (int) Math.ceil(range.get() / 16.0);
+        double maxSq = range.get() * range.get();
+
+        for (int cx = pcx - rc; cx <= pcx + rc; cx++) {
+            for (int cz = pcz - rc; cz <= pcz + rc; cz++) {
+                WorldChunk chunk = mc.world.getChunkManager().getWorldChunk(cx, cz);
+                if (chunk == null) continue;
+
+                for (BlockEntity be : chunk.getBlockEntities().values()) {
+                    String name = nameFor(be);
+                    if (name == null) continue;
+
+                    BlockPos bp = be.getPos();
+                    int bx = bp.getX(), by = bp.getY(), bz = bp.getZ();
+
+                    double dx = bx + 0.5 - proj.ex;
+                    double dy = by + 0.5 - proj.ey;
+                    double dz = bz + 0.5 - proj.ez;
+                    double distSq = flat ? dx * dx + dz * dz : dx * dx + dy * dy + dz * dz;
+                    if (distSq > maxSq) continue;
+
+                    int color = colorFor(name);
+
+                    if (threeD) {
+                        if (!proj.visible(bx, by, bz, bx + 1, by + 1, bz + 1)) continue;
+                        proj.box3d(ctx, bx, by, bz, bx + 1, by + 1, bz + 1, color);
+                        if (names.get()) {
+                            double[] s = proj.project(bx + 0.5, by + 1.2, bz + 0.5);
+                            if (s != null) {
+                                int tx = (int) s[0] - mc.textRenderer.getWidth(name) / 2;
+                                ctx.drawTextWithShadow(mc.textRenderer, name, tx, (int) s[1] - 10, color);
+                            }
+                        }
+                    } else {
+                        int[] b = proj.bounds(bx, by, bz, bx + 1, by + 1, bz + 1);
+                        if (b == null) continue;
+                        Projector.box(ctx, b, color, fill.get());
+                        if (names.get()) {
+                            int tx = (b[0] + b[2]) / 2 - mc.textRenderer.getWidth(name) / 2;
+                            ctx.drawTextWithShadow(mc.textRenderer, name, tx, b[1] - 10, color);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
