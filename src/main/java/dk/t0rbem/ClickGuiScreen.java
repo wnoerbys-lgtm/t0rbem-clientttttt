@@ -184,7 +184,7 @@ public class ClickGuiScreen extends Screen {
         int y = Y0 + ROW + 2;
         y = clientRow(ctx, px, y, mx, my, "Edit HUD layout", null, 0xFFFFFFFF,
                 "Træk HUD-elementerne hen hvor du vil have dem.",
-                () -> mc.setScreen(new HudEditorScreen()));
+                () -> net.minecraft.client.MinecraftClient.getInstance().setScreen(new HudEditorScreen()));
         y = clientRow(ctx, px, y, mx, my, "HUD",
                 T0rbemClient.hudVisible ? "ON" : "OFF",
                 T0rbemClient.hudVisible ? 0xFF55FF88 : 0xFFFF5555,
